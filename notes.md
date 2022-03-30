@@ -22,7 +22,7 @@
 
 - $\sigma(x)$ 是 $sigmoid$ 函数的简写  
   $$
-  \sigma(z) = \frac{1}{1+e^{-z}}
+  \sigma(z) = \frac{1}{1+e^{-z}} \tag{2.1.1}
   $$
 
 - $\hat{y} = \sigma(w^Tx + b$)    $w$是特征前的系数，$b$是偏置量
@@ -34,19 +34,19 @@
 
 - 一种定义Loss
   $$
-  L(\hat{y},y) = \frac{1}{2}(\hat{y}-y)^2
+  L(\hat{y},y) = \frac{1}{2}(\hat{y}-y)^2\tag{2.1.2}
   $$
 
   > 这种定义方法在后期的优化问题中会变成非凸的（non-convex）,会得到许多局部最优解，而不是全局最优解吗，梯度下降法就不能用了
 
 - 另一种定义Loss，对于Logistic Regression 而言
   $$
-  L(\hat{y},y) = -(ylog(\hat{y})+(1-y)log(1-\hat{y}))
+  L(\hat{y},y) = -(ylog(\hat{y})+(1-y)log(1-\hat{y}))\tag{2.1.3}
   $$
 
 - 定义Cost Function
   $$
-  J(w,b) = \frac{1}{m} \sum_{i=1}^{m} L(\hat{y}^{(i)},y^{(i)})
+  J(w,b) = \frac{1}{m} \sum_{i=1}^{m} L(\hat{y}^{(i)},y^{(i)})\tag{2.1.4}
   $$
   
 
@@ -68,5 +68,41 @@
 - 接下来就是要利用Gradient Descent 进行对参数$\theta$ 进行调整从而使$L(\hat y, y)$ 降到最低
 - 由生成的单样本损失函数计算$\theta$ 每个维度的值的偏导数，这个叫做后向传播(backwards propagation steps)
 - 根据代码规范，求出对应的`dwi,db`
+- 对$m$个训练examples进行做同样的操作，每一个$dw_i$，这里的$dw_i$是$\theta$ 的每个维度，也是每一个example的多个参数，所以对于一个确定的$i$，会有$m$个$dw_i$，然后对$dw_i$ 求和取平均
 - 更新对应的参数`wi = wi - alpha*dwi;b = b-alpha*db`
+
+> **显然在上述步骤会用到至少两个For 循环，其中一个是对$m$个example 进行遍历计算，同时对于任一个example都会要对其中的所有$dw_i$进行计算，所以这个可以拜托显式的For 循环，采取向量进行加速运算。**
+>
+> **深度学习中应用向量化有助于在大数据集进行简化运算。**
+
+## Week2.2 Python and Vectorization
+
+### 1.Vectorizing Logistic Regression 
+
+- 不采取显式循环，仅使用向量运算实现
+
+- 根据显式循环的做法
+  $$
+  z^{(i)} = w^Tx^{(i)}+b \tag{2.2.1}
+  $$
+
+  $$
+  a^{(i)} = \sigma{(z^{(i)})} \tag{2.2.2}
+  $$
+
+  其中$a^{(i)}$​ 也就是上文提到的 $\hat{y}^{(i)}$​
+
+- 在第一部分[Binary Classification](#1. Binary Classification) 中提到的 $X = [x^{(1)},x^{(2)},x^{(3)},......x^{(m)}]$ 这里的$x^{(i)}$都是$n_x*1$的向量，组成的$X$ 矩阵是 $n_x*m$的矩阵
+
+- $w$是$n_x * 1$ 的列向量
+
+- 由公式$2.2.1$ 对公式进行向量化
+  $$
+  Z = w^TX+b \tag{2.2.3}
+  $$
+  其中$Z = [z^{(1)},z^{(2)},z^{(3)},z^{(4)},......z^{(m)}]$
+
+  
+
+### 2. Vectorizing Logistic Regression
 
