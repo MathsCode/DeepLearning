@@ -4,7 +4,6 @@
 >
 > - 在此文档中的矩阵书写中，是按照Matlab的代码书写规则而来，逗号(,)代表两边相邻的元素是同一行的，分号(;)代表两边相邻的元素是分行的。
 > - 注意上标和下标的区分，上标加圆括号代表的是第几个训练样本的对应数值，上标加方括号代表的是网络不同的层，下标代表的是当前参数的第几个维度。
-> - 
 
 ## Week1 Introduction to Deep Learning
 
@@ -102,12 +101,12 @@
     $$
     注意：公式$2.1.5.4$中的$log$ 是以自然常数$e$为底
     $$
-    \frac{d(log_ax)}{dx} = \lim_{\Delta{x} \to 0} \frac{log_a(x+\Delta x)-log_ax}{\Delta x} \\= \lim_{\Delta{x} \to 0}\frac{1}{\Delta x} log_a(\frac{x+\Delta x}{x})\\
-    = \lim_{\Delta{x} \to 0}\frac{1}{\Delta x} log_a(1+\frac{\Delta x}{x})\\
-    = \lim_{\Delta{x} \to 0}log_a(1+\frac{\Delta x}{x})^\frac{1}{\Delta x}\\
-    = \lim_{\Delta{x} \to 0}log_a(1+\frac{\Delta x}{x})^{\frac{x}{\Delta x}*\frac{1}{x}}\\
-    = \lim_{\Delta{x} \to 0} log_ae^\frac{1}{x}\\
-    = \lim_{\Delta{x} \to 0} \frac{ln e^\frac{1}{x}}{lna}\\
+    \frac{d(log_ax)}{dx} = \lim_{\Delta{x} \to 0} \frac{log_a(x+\Delta x)-log_ax}{\Delta x} \\\\= \lim_{\Delta{x} \to 0}\frac{1}{\Delta x} log_a(\frac{x+\Delta x}{x})\\\\
+    = \lim_{\Delta{x} \to 0}\frac{1}{\Delta x} log_a(1+\frac{\Delta x}{x})\\\\
+    = \lim_{\Delta{x} \to 0}log_a(1+\frac{\Delta x}{x})^\frac{1}{\Delta x}\\\\
+    = \lim_{\Delta{x} \to 0}log_a(1+\frac{\Delta x}{x})^{\frac{x}{\Delta x}*\frac{1}{x}}\\\\
+    = \lim_{\Delta{x} \to 0} log_ae^\frac{1}{x}\\\\
+    = \lim_{\Delta{x} \to 0} \frac{ln e^\frac{1}{x}}{lna}\\\\
     = \frac{1}{xlna}
     $$
 
@@ -118,14 +117,14 @@
     $$
 
     $$
-    \frac{dL}{dz} = (-\frac{y}{\hat y} + \frac{1-y}{1-\hat y})*\frac{e^{-z}}{1+e^{-z}}\\
-    = (\frac{\hat y - y}{\hat y (1-\hat y)})*\frac{e^{-z}}{1+e^{-z}}\\
+    \frac{dL}{dz} = (-\frac{y}{\hat y} + \frac{1-y}{1-\hat y})*\frac{e^{-z}}{1+e^{-z}}\\\\
+    = (\frac{\hat y - y}{\hat y (1-\hat y)})*\frac{e^{-z}}{1+e^{-z}}\\\\
     = \hat{y}-y \tag{2.1.5.7}
     $$
 
-  - 根据$2.1.5.2$ 求 $\frac{\part L}{\part w_i}$，即`dwi`
+  - 根据$2.1.5.2$ 求 $\frac{\partial L}{\partial w_i}$，即`dwi`
     $$
-    \frac{\part L}{\part w_i} = x_i*\frac{dL}{dz}\tag{2.1.5.8}
+    \frac{\partial L}{\partial w_i} = x_i*\frac{dL}{dz}\tag{2.1.5.8}
     $$
 
   - 因为$b = w_0,x_0 = 1$
@@ -199,13 +198,13 @@ A = sigmoid(Z)
 
 - 根据单数据梯度[5. Logistic Regression Derivatives 求逻辑回归的导数](#5. Logistic Regression Derivatives 求逻辑回归的导数)中公式$2.1.5.7$和[4.Gradient Descent 梯度下降法](#4. Gradient Descent 梯度下降法)中提到的代码规范，可得
   $$
-  dz^{(1)} = a^{(1)} - y^{(1)}\\
-  dz^{(2)} = a^{(2)} - y^{(2)}\\......\\
-  dz^{(i)} = a^{(i)} - y^{(i)}\\
+  dz^{(1)} = a^{(1)} - y^{(1)}\\\\
+  dz^{(2)} = a^{(2)} - y^{(2)}\\\\......\\\\
+  dz^{(i)} = a^{(i)} - y^{(i)}\\\\
   $$
   对其进行向量化
   $$
-  dZ = [dz^{(1)},dz^{(2)},.....dz^{(m)}]\\
+  dZ = [dz^{(1)},dz^{(2)},.....dz^{(m)}]\\\\
   A = [a^{(1)},a^{(2)},.....a^{(m)}],Y = [y^{(1)},y^{(2)},.....y^{(m)}]\\
   $$
 
@@ -217,7 +216,7 @@ A = sigmoid(Z)
 
 - 根据公式$2.1.5.8$进行向量化，对于一个example可以把所有的`dw_i`构成一个向量
   $$
-  dw^{(i)} = [\frac{\part L}{\part w_1},\frac{\part L}{\part w_2},.....\frac{\part L}{\part w_{n_x}}]^T \tag{2.2.2.2}
+  dw^{(i)} = [\frac{\partial L}{\partial w_1},\frac{\partial L}{\partial w_2},.....\frac{\partial L}{\partial w_{n_x}}]^T \tag{2.2.2.2}
   $$
   而对于m个example
   $$
@@ -661,7 +660,7 @@ $$
     第$i+1$层前向计算公式：
 
   $$
-  Z^{[i+1]} = W^{[i+1]}A^{[i]}+b^{[i+1]}\\
+  Z^{[i+1]} = W^{[i+1]}A^{[i]}+b^{[i+1]}\\\\
   		= W^{[i+1]}g^{[i]}(Z^{[i]})+b^{[i+1]} \tag{3.5.2.1}
   $$
 
@@ -671,8 +670,8 @@ $$
 
 - 已知第$i+1$的计算结果$dZ^{[i+1]},dw^{[i+1]},db^{[i+1]}$，待计算的参数有$dZ^{[i]},dw^{[i]},db^{[i]}$
   $$
-  dZ^{[i]}= \frac{dFinalOutput}{dZ^{[i]}}\\
-  		  = \frac{dFinalOutput}{dZ^{[i+1]}}*\frac{dZ^{[i+1]}}{dZ^{[i]}}\\
+  dZ^{[i]}= \frac{dFinalOutput}{dZ^{[i]}}\\\\
+  		  = \frac{dFinalOutput}{dZ^{[i+1]}}*\frac{dZ^{[i+1]}}{dZ^{[i]}}\\\\
             = dZ^{[i+1]}(已知)*\frac{dZ^{[i+1]}}{dZ^{[i]}} \tag{3.5.2.2}
   $$
 
@@ -693,15 +692,15 @@ $$
 
   - 对于$Z^{[i]}_{(:,l)}$而言是一个$n^{[i]}*1$的列向量，所以要采取偏导形式，计算出$Z^{[i+1]}_{(j,l)}$对列向量中每个元素$Z^{[i]}_{(p,l)}$的偏导值。
     $$
-    \frac{\part Z^{[i+1]}_{(j,l)}}{\part Z^{[i]}_{(p,l)}} = (w^{[i+1]}_j)_p*[g^{[i]}(Z^{[i]}_{(p,l)})]^{'} \tag{3.5.2.4}
+    \frac{\partial Z^{[i+1]}_{(j,l)}}{\partial Z^{[i]}_{(p,l)}} = (w^{[i+1]}_j)_p*[g^{[i]}(Z^{[i]}_{(p,l)})]^{'} \tag{3.5.2.4}
     $$
 
   - **根据公式$(3.5.1.2)$可知，$dZ^{[i+1]}$应是一个$n^{[i+1]}*m$的矩阵，其中第$p$行，第$q$列的元素代表着最后输出结果对第$i+1$层中第$p$个节点在第$q$个训练样本的输入后的结果$Z^{[i+1]}_{(p,q)}$求偏导的导数值。** 
 
     所以，对公式$(3.5.2.2)$和$(3.5.2.4)$进行结合，要得到最后输出结果对第$i$层中第$p$个节点在第$l$个训练样本的输入后的结果$Z^{[i]}_{(t,l)}$求偏导的导数值
     $$
-    \frac{ \part FinalOutput}{\part Z^{[i]}_{(p,l)}} = \frac{ \part FinalOutput}{\part Z^{[i+1]}_{(j,l)}}*\frac{ \part  Z^{[i+1]}_{(j,l)}}{\part Z^{[i]}_{(p,l)}} \\
-    = dZ^{[i+1]}_{(j,l)}*\frac{ \part  Z^{[i+1]}_{(j,l)}}{\part Z^{[i]}_{(p,l)}}\\
+    \frac{ \partial FinalOutput}{\partial Z^{[i]}_{(p,l)}} = \frac{ \partial FinalOutput}{\partial Z^{[i+1]}_{(j,l)}}*\frac{ \partial  Z^{[i+1]}_{(j,l)}}{\partial Z^{[i]}_{(p,l)}} \\\\
+    = dZ^{[i+1]}_{(j,l)}*\frac{ \partial  Z^{[i+1]}_{(j,l)}}{\partial Z^{[i]}_{(p,l)}}\\\\
     = dZ^{[i+1]}_{(j,l)}*(w^{[i+1]}_j)_p*[g^{[i]}(Z^{[i]}_{(p,l)})]^{'} \tag{3.5.2.5}
     $$
 
@@ -709,11 +708,11 @@ $$
 
     $p$变化时（节点变化，多节点向量计算）的向量化结果为：
     $$
-    \frac{\part FinalOutput}{\part Z^{[i]}_{(:,l)}} = [\frac{\part FinalOutput}{\part Z^{[i]}_{(1,l)}},\frac{\part FinalOutput}{\part Z^{[i]}_{(2,l)}},\frac{\part FinalOutput}{\part Z^{[i]}_{(3,l)}}.....]^T \tag{3.5.2.6}
+    \frac{\partial FinalOutput}{\partial Z^{[i]}_{(:,l)}} = [\frac{\partial FinalOutput}{\partial Z^{[i]}_{(1,l)}},\frac{\partial FinalOutput}{\partial Z^{[i]}_{(2,l)}},\frac{\partial FinalOutput}{\partial Z^{[i]}_{(3,l)}}.....]^T \tag{3.5.2.6}
     $$
 
     $$
-    \frac{\part FinalOutput}{\part Z^{[i]}_{(:,l)}} =dZ^{[i+1]}_{(j,l)}* w^{[i+1]}_j*[g^{[i]}(Z^{[i]}_{(:,l)})]^{'}  \tag{3.5.2.7}
+    \frac{\partial FinalOutput}{\partial Z^{[i]}_{(:,l)}} =dZ^{[i+1]}_{(j,l)}* w^{[i+1]}_j*[g^{[i]}(Z^{[i]}_{(:,l)})]^{'}  \tag{3.5.2.7}
     $$
 
     > 因为p变化改变的是第$i$层的节点输出结果值，不会影响到结果输入到第$i+1$的具体节点($j$)
@@ -726,7 +725,7 @@ $$
 
     $j$变化时的向量化结果（固定样本，所有节点）:前面两个乘数发生变化，每一列由$(3.5.2.4)$的列向量组成
     $$
-    \frac{\part FinalOutput}{\part Z^{[i]}_{(:,l)}} =[\frac{\part FinalOutput}{\part Z^{[i]}_{(:,l)}},\frac{\part FinalOutput}{\part Z^{[i]}_{(:,l)}},\frac{\part FinalOutput}{\part Z^{[i]}_{(:,l)}}.....]\tag{3.5.2.8}
+    \frac{\partial FinalOutput}{\partial Z^{[i]}_{(:,l)}} =[\frac{\partial FinalOutput}{\part Z^{[i]}_{(:,l)}},\frac{\partial FinalOutput}{\partial Z^{[i]}_{(:,l)}},\frac{\partial FinalOutput}{\partial Z^{[i]}_{(:,l)}}.....]\tag{3.5.2.8}
     $$
 
     $$
