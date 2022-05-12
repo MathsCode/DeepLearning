@@ -245,15 +245,39 @@ $$
 
 - 如何选择mini-batch的size
 
-   
+  - size 为m的话，就跟普通的Batch gradient descent 一样的，每次迭代需要处理大量样本，如果样本数量巨大，单词迭代时间太长。
+  - size 为1的话，每一个样本都是一个mini-batch，叫做stochastic gradient descent 随机梯度下降法，每次迭代都是一个训练样本，无法通过向量化计算来进行运算加速。
+  - 所以真正的size应该介于两者之间
+  
+  
+  
+  
+
+### 3. Exponentially weighted averages 指数加权平均
+
+在统计学中，叫做exponentially weighted moving average指数加权滑动平均值。
+
+核心思想：
+$$
+V_t = \beta V_{t-1} + (1-\beta)\theta_t
+$$
+$\beta$代表的是当前值在最终值中的占比，$\frac{1}{(1-\beta)}$ 代表当前值考虑了之前多少个数据。
 
 
 
+### 4. Bias correction in exponentially weighted averages 偏差修正
 
+在指数加权平均的初期，会导致数据偏小，因为缺少之前的数据，可以理解为在热身预测学习。
 
+所用在公式$(13)$的基础上用：
+$$
+V_t = \frac{V_t}{(1-\beta ^ t)}
+$$
+来取代公式$(13)$的计算结果，这就叫做偏差修正，当然这么做是基于关注初期数据的需要，如果不关注初期数据可以不采用偏差修正。
 
+### 5. Gradient descent with momentum 动量梯度下降法
 
-
+ 
 
 
 
