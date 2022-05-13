@@ -246,12 +246,58 @@ $$
 - 如何选择mini-batch的size
 
   - size 为m的话，就跟普通的Batch gradient descent 一样的，每次迭代需要处理大量样本，如果样本数量巨大，单词迭代时间太长。
-  - size 为1的话，每一个样本都是一个mini-batch，叫做stochastic gradient descent 随机梯度下降法，每次迭代都是一个训练样本，无法通过向量化计算来进行运算加速。
+  
+  - size 为1的话，每一个样本都是一个mini-batch，叫做Stochastic Gradient Descent 随机梯度下降法，每次迭代都是一个训练样本，无法通过向量化计算来进行运算加速。
+  
+    > 一种变体是随机梯度下降（SGD），它相当于小批量梯度下降，每个小批量只有一个示例。您刚刚实现的更新规则不会更改。改变的是，一次只计算一个训练示例的梯度，而不是整个训练集的梯度。
+  
   - 所以真正的size应该介于两者之间
   
-  
-  
-  
+
+- **(Batch) Gradient Descent**:
+
+``` python
+X = data_input
+Y = labels
+m = X.shape[1]  # Number of training examples
+parameters = initialize_parameters(layers_dims)
+for i in range(0, num_iterations):
+    # Forward propagation
+    a, caches = forward_propagation(X, parameters)
+    # Compute cost
+    cost_total = compute_cost(a, Y)  # Cost for m training examples
+    # Backward propagation
+    grads = backward_propagation(a, caches, parameters)
+    # Update parameters
+    parameters = update_parameters(parameters, grads)
+    # Compute average cost
+    cost_avg = cost_total / m
+        
+```
+
+- **Stochastic Gradient Descent**:
+
+```python
+X = data_input
+Y = labels
+m = X.shape[1]  # Number of training examples
+parameters = initialize_parameters(layers_dims)
+for i in range(0, num_iterations):
+    cost_total = 0
+    for j in range(0, m):
+        # Forward propagation
+        a, caches = forward_propagation(X[:,j], parameters)
+        # Compute cost
+        cost_total += compute_cost(a, Y[:,j])  # Cost for one training example
+        # Backward propagation
+        grads = backward_propagation(a, caches, parameters)
+        # Update parameters
+        parameters = update_parameters(parameters, grads)
+    # Compute average cost
+    cost_avg = cost_total / m
+```
+
+
 
 ### 3. Exponentially weighted averages 指数加权平均
 
@@ -277,31 +323,143 @@ $$
 
 ### 5. Gradient descent with momentum 动量梯度下降法
 
- 
+- 目的：希望在训练的时候，收敛速度更快同时波动幅度更小
+
+- 思想：
+
+  在某次迭代过程中：用当前的mini-batch来计算当前的dW、db
+  $$
+  v_{dw} = \beta v_{dw} + (1-\beta) dW
+  $$
+
+  $$
+  v_{db} = \beta v_{db} + (1-\beta)db
+  $$
+
+  $$
+  W = W-\alpha v_{dw},b = b-\alpha v_{db}
+  $$
+
+  当然也可以有偏差修正，但一般情况采取动量梯度下降不会有偏差的困扰。
+  
+- 因为小批量梯度下降在只看到一部分示例后进行参数更新，所以更新的方向有一些变化，因此小批量梯度下降所走的路径将“振荡”到收敛。使用动量可以减少这些振荡。
+  动量考虑了过去的梯度来平滑更新。先前渐变的“方向”存储在变量中 在形式上，这将是之前步骤中梯度的指数加权平均值。你也可以想到当一个球滚下山时的“速度”，根据山的坡度(坡度的方向)来增加速度（和动量）。
+
+### 6. RMSprop
+
+- 目的：和动量梯度下降法的目的一样，希望收敛速度更快，并且幅度更小
+
+- 思想：
+
+  在某次迭代过程中：用当前的mini-batch来计算当前的dW、db
+  $$
+  S_{dw} = \beta S_{dw} + (1-\beta) dW^{2}
+  $$
+
+  $$
+  S_{db} = \beta S_{db} + (1-\beta)db^2
+  $$
+
+  $$
+  W = W-\alpha \frac{dw}{\sqrt S_{dw}},b = b-\alpha \frac{db}{\sqrt S_{db}}
+  $$
+
+  > 本质就是看哪个维度速度慢就让他除以一个小的数让他加快，速度快自然就除以的是一个大数，自然就慢了。
+
+
+
+### 7. Adam 优化算法
+
+- 本质：其实将Momentum 和 RMSprop相结合起来。
+
+- 思想：
+
+  在某次迭代过程中：用当前的mini-batch来计算当前的dW、db
+  $$
+  v_{dw} = \beta_1v_{dw} + (1-\beta_1)dW
+  $$
+  
+  $$
+  v_{db} = \beta_1 v_{db} + (1-\beta_1)db
+  $$
+  
+  $$
+  S_{dw} = \beta_2 S_{dw} + (1-\beta_2) dW^{2}
+  $$
+
+  $$
+  S_{db} = \beta_2 S_{db} + (1-\beta_2)db^2
+  $$
+
+  $$
+  V_{dw}^{corrected} = \frac{V_{dw}}{(1-\beta_1^t)}
+  $$
+
+  $$
+  V_{db}^{corrected} = \frac{V_{db}}{(1-\beta_1^t)}
+  $$
+
+  $$
+  S_{dw}^{corrected} = \frac{S_{dw}}{(1-\beta_2^t)}
+  $$
+
+  $$
+  S_{db}^{corrected} = \frac{S_{db}}{(1-\beta_2^t)}
+  $$
+
+  $$
+  W = W-\alpha \frac{V_{dw}^{corrected}}{\sqrt {S_{dw}^{corrected}} +  \epsilon },b = b-\alpha \frac{V_{db}^{corrected}}{\sqrt {S_{db}^{corrected}} + \epsilon}
+  $$
+
+
+
+Adam广泛地使用与各种网络结构，但是其中超参数众多，每一个参数都对应着自己的作用或者说一个moment，所以叫做Adaptive Moment estimation
+
+- $\alpha$需要自行调整
+- $\beta_1$一般设置为0.9
+
+- $\beta_2$ 推荐为0.999
+- $\epsilon$ 一般设置为$10^{-8}$
+
+### 8. Learning rate decay 学习率衰减
+
+- 目的：神经网络训练是按照mini-batch gradient descent 来进行训练的，所以随着epoch的推移，最终会在最小值的附近的小块区域里摆动，所以无法真正快速的触及到最小值。所以学习率需要随着epoch的增加而衰减，即步子要越跨越小。
+
+  > 模拟退火算法：
+  >
+  > 
+
+- 思想：
+
+  衰减公式1：
+  $$
+  \alpha = \frac{1}{1+decay\_rate*epoch\_num}\alpha_0
+  $$
+  衰减公式2：指数衰减
+  $$
+  \alpha = 0.95^{epoch\_num}\alpha_0
+  $$
+  衰减公式3：
+
+  
+  $$
+  \alpha = \frac{k}{\sqrt{epoch\_num}}\alpha_0
+  $$
+  
 
 
 
 
 
+### 9. Code Exercise
 
+- 如果要利用次函数对输入数据X、Y进行随机排序，且要求随机排序后的X Y中的值保持原来的对应关系，可以这样处理：
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+```python
+per = list(np.random.permutation(m))
+shuffer_X = X[per]
+shuffer_Y = Y[per]
+```
 
 
 
