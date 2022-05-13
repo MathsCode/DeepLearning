@@ -253,7 +253,6 @@ $$
   
   - 所以真正的size应该介于两者之间
   
-
 - **(Batch) Gradient Descent**:
 
 ``` python
@@ -460,6 +459,59 @@ per = list(np.random.permutation(m))
 shuffer_X = X[per]
 shuffer_Y = Y[per]
 ```
+
+
+
+## Week3 Hyperparameter Tuning, Batch Normalization and programming Frameworks
+
+### 1. Hyper parameter Tuning 超参数调节（Tips）
+
+- 超参数重要性排序：
+  - 学习率$\alpha$
+  - 动量梯度下降法中的指数加权平均中的$\beta$，隐层单元数，mini-batch size
+  - 层数、学习率衰减公式
+
+- 尝试随机值，因为很难提前知道什么超参数是好的，尝试从粗略到精细，从大区域聚焦到小区域。
+- 随机取值并不是在有效值范围内随机均匀取值，而是选择适当的步进值去探究这些超参数，**这里采取==对数标尺==搜索超参数方式会更合理**，反而不用线性轴。因为一般在右边界考虑取值的时候，参数值的细微变化都会引起很大的影响。
+
+
+
+- 超参数搜索实践：
+  -  Babysitting one model（Panda Approach）：适用于拥有庞大的数据组，但是没有足够的计算机资源，即使正在训练的同时，也可以对参数进修改，就像人类在照看模型一样，根据模型的训练效果进行对参数的调节。在应用领域比如cv 或者推荐系统，一般更多看应用效果，所以采取panda模式。
+  - Train many models in parallel（caviar strategy 鱼子酱策略）: 在拥有足够的计算资源的基础上，设置多个不同的参数组，得到不同的模型，然后可以得到不同的学习曲线，从中挑选一个最好的。
+
+### 2. Normalizing activations in a network 对激活函数进行归一化
+
+- 效果：使参数搜索问题变得更容易，使神经网络对参数选择更稳定，对于深度网络更好训练。 
+
+- 核心思想：Batch Normalization Batch 归一化，本质上来讲，其适用的归一化过程不仅仅是输入层，也是对神经网络中的每一个隐藏层的计算结果都进行归一化，因为上一层的结果作为下一层的输入，对输入的归一化可以加速下一层参数的训练效果。
+
+- 过程：
+
+  对于神经网络中的隐藏层的值进行归一化：
+  $$
+  \mu = \frac{1}{n^{[l]}} \sum_{i=1}^{n^{[l]}}Z_{i}
+  $$
+  注意这里的$Z_{i}$表示表示的是$Z^{[l]}$的第$i$个分量
+  $$
+  \sigma^2 = \frac{1}{n^{[l]}}\sum_{i}^{n^{[l]}} (Z_{i}-\mu)^2
+  $$
+
+  $$
+  Z\_norm_{i} = \frac{Z_{i}-\mu}{\sqrt{\sigma^2+\epsilon}}
+  $$
+
+  这样得到的$Z\_norm$就是方差为1，均值为0的分布，但是有的时候隐层的数据拥有不同的分布会存在意义，并不希望其是方差为1均值为0的分布，所以计算$\tilde{Z}$
+  $$
+  \tilde{Z}_i = \gamma Z\_norm_i + \beta
+  $$
+  这里的$\gamma$ 和$\beta$是模型训练过程中进行训练的参数，不是超参。
+
+### 3. 深度理解Batch Normalization
+
+
+
+
 
 
 
