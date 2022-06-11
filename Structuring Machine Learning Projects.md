@@ -86,3 +86,7 @@
   - 了解variance的大小，知道从训练集推广到开发集上还需要做出多少的努力
     - more data
     - 正则化（L2、dropout。。。）
+
+## Week2 ML strategy
+
+### 9.  
